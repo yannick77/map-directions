@@ -209,6 +209,8 @@
                 if (status === 'OK') {
                     directionsDisplay.setDirections(response);
                     var route = response.routes[0];
+                    var totalDistance=0, distance=0, duration = 0;
+                    var totalDuration=0;
                     var summaryPanel = document.getElementById('directions-panel');
                     summaryPanel.innerHTML = '';
                     // For each route, display summary information.
@@ -219,31 +221,41 @@
                         summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
                         summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
                         summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+                        distance+=parseInt(route.legs[i].distance.value);
+                        duration+=parseInt(route.legs[i].duration.value);
+
+                       Number.prototype.convertDistance= function(){
+                           var number= parseInt(this, 10);
+                           var km= number/1000 + "km";
+
+                           return km;
+                       }
+
+                        Number.prototype.convertTime= function () {
+                            var sec_num = parseInt(this, 10); // don't forget the second param
+                            var hours   = Math.floor(sec_num / 3600);
+                            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+                           // var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+                            if (hours   < 10) {hours   = "0"+hours;}
+                            if (minutes < 10) {minutes = "0"+minutes;}
+                            return hours+'hrs '+minutes+'mins';
+                        }
                     }
+
+                    var totalInformation= '<br><b>'+"Total Distance: "+distance.convertDistance()+'<br>'+ "Total Time: "+duration.convertTime()+'</b>';
+
+                    summaryPanel.innerHTML+=totalInformation;
+
                 } else {
                     window.alert('Directions request failed due to ' + status);
                 }
+
+
+
             });
         }
     </script>
-
-
-
-    <!--<script>-->
-        <!--function overlayDirections() {-->
-           <!--fromAddress= document.getElementById("startingStreet").value + " " + document.getElementById("startingCity").value;-->
-           <!--wayPoint1= document.getElementById("viaStreet1").value +" "+document.getElementById("viaCity1").value;-->
-            <!--wayPoint2= document.getElementById("viaStreet2").value +" "+document.getElementById("viaCity2").value;-->
-           <!--toAddress= document.getElementById("destinationStreet").value + " " + document.getElementById("destinationStreet").value;-->
-
-            <!--gdir.load("from: " + fromAddress + " to: " + toAddress);-->
-        <!--}-->
-
-    <!--</script>-->
-
-
-
-
 
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDb7_KwfEv9gQQMYtUHOAH9Roq1ykX5F1s&callback=initMap">
